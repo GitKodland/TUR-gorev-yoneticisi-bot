@@ -1,16 +1,16 @@
-#  The task planner bot
+#  Görev Planlayıcı Bot
 
-### Primary fuctions:
-- Creating and removing tasks
-- The task list feature for individual users
-- Displaying current tasks
+### Temel İşlevler:
+- Görev oluşturma ve kaldırma
+- Bireysel kullanıcılar için görev listesi özelliği
+- Mevcut görevleri gösterme
 
-### Essential commands
+### Temel Komutlar:
 
-!task add [task description] - adds a new task
+!task add [görev açıklaması] - Yeni bir görev ekler.
 
-!task remove [task ID] - removes a task
+!task remove [görev ID] - Bir görevi kaldırır.
 
-!task list - shows a list of current tasks
+!task list - Mevcut görevlerin listesini gösterir.
 
-!info - displays information about the bot
+!info - Bot hakkında bilgi görüntüler.
