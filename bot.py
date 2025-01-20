@@ -2,77 +2,77 @@ import discord
 from discord.ext import commands
 from config import TOKEN
 
-# Create an intents object for the bot so that the bot can receive messages
+#  Botun mesajları alabilmesi için bir intents nesnesi oluştur
 intents = discord.Intents.default()
 intents.messages = True
 
-# Create a bot object with the '!' prefix for commands
+# '!' öneki ile komutlar için bir bot nesnesi oluştur
 bot = commands.Bot(command_prefix='!', intents=intents)
 
-# A dictionary for storing user tasks. Key - user ID, value - list of tasks
+# Kullanıcı görevlerini saklamak için bir sözlük. Anahtar: kullanıcı ID'si, değer: görev listesi
 tasks = {}
 
-# An event that is triggered when the bot is successfully launched
+# Bot başarıyla başlatıldığında tetiklenen bir olay
 @bot.event
 async def on_ready():
-    print(f'Logged in as {bot.user}')
+    print(f'{bot.user} olarak giriş yapıldı.')
 
-# Task management command
+# Görev yönetimi komutu
 @bot.command()
 async def task(ctx, action=None, *, content=None):
-    # Fetching the ID of the user who called the command
+    # Komutu çağıran kullanıcının ID'sini al
     user_id = ctx.author.id
-    # If the user does not have any tasks yet, create an empty task list for the user
+    # Eğer kullanıcının henüz hiç görevi yoksa, kullanıcı için boş bir görev listesi oluştur
     if user_id not in tasks:
         tasks[user_id] = []
 
-    # Processing the task adding command
+    # Görev ekleme komutunu işle
     if action == 'add':
-        task_id = len(tasks[user_id]) + 1  # Generating task ID
-        tasks[user_id].append({'id': task_id, 'content': content})  # Adding the task to the user's list
-        await ctx.send(f'Task added: {content} (ID: {task_id})')  # Send confirmation
+        task_id = len(tasks[user_id]) + 1  # Görev ID'si oluştur
+        tasks[user_id].append({'id': task_id, 'content': content})  # Görevi kullanıcının listesine ekle
+        await ctx.send(f'Görev eklendi: {content} (ID: {task_id})')  # Onay mesajı gönder
 
-    # Processing the task removal command
+    # Görev kaldırma komutunu işle
     elif action == 'remove':
-        if content and content.isdigit():  # Checking if a valid task ID is provided
-            task_id = int(content)  # Converting task ID to a number
-            task_list = tasks[user_id]  # Getting the user's task list
-            # Searching for the task by ID
+        if content and content.isdigit():  # Geçerli bir görev ID'si sağlanıp sağlanmadığını kontrol et
+            task_id = int(content)  # Görev ID'sini sayıya dönüştür
+            task_list = tasks[user_id]  #Kullanıcının görev listesini al
+            # Görevi ID'ye göre ara
             task_to_remove = next((task for task in task_list if task['id'] == task_id), None)
             if task_to_remove:
-                task_list.remove(task_to_remove)  # Removing the task from the list
-                await ctx.send(f'Task with ID {task_id} removed.')  # Sending confirmation
+                task_list.remove(task_to_remove)  # Görevi listeden kaldır
+                await ctx.send(f'ID {task_id} olan görev kaldırıldı.')  # Onay mesajı gönder
             else:
-                await ctx.send(f'Task with ID {task_id} not found.')  # Notifying if the task was not found
+                await ctx.send(f'ID {task_id} olan görev bulunamadı.')  # Görev bulunamadıysa bilgilendir
         else:
-            await ctx.send('Please provide a valid task ID to remove.')  # Notifying about an error
+            await ctx.send('Lütfen kaldırmak için geçerli bir görev ID sağlayın.')  # Hata mesajı gönder
 
-    # Processing the command to display the task list
+    # Görev listesini gösterme komutunu işle
     elif action == 'list':
-        task_list = tasks[user_id]  # Getting the user's task list
+        task_list = tasks[user_id]  # Kullanıcının görev listesini al
         if task_list:
-            # Creating a response with the list of tasks
-            response = "Your current tasks:\n"
-            response += "\n".join([f"ID: {task['id']}, Description: {task['content']}" for task in task_list])
+            # Görev listesiyle bir yanıt oluştur
+            response = "Mevcut görevleriniz:\n"
+            response += "\n".join([f"ID: {task['id']}, Açıklama: {task['content']}" for task in task_list])
         else:
-            response = "You have no current tasks."  # Notifying the user that there are no tasks
-        await ctx.send(response)  # Send the task list
+            response = "Hiç göreviniz bulunmuyor."  # Kullanıcıya görev olmadığını bildir
+        await ctx.send(response)  # Görev listesini gönder
 
-    # Processing an unknown command
+    # Bilinmeyen bir komut işleniyorsa
     else:
-        await ctx.send('Unknown action. Please use add, remove, or list.')
+        await ctx.send('Bilinmeyen eylem. Lütfen add, remove veya list kullanın..')
 
-# A separate command to display help information
+# Yardım bilgilerini göstermek için ayrı bir komut
 @bot.command()
 async def info(ctx):
     response = (
-        "Available commands:\n"
-        "!task add [task description] - adds a new task.\n"
-        "!task remove [task ID] - removes a task by the specified ID.\n"
-        "!task list - displays the list of current tasks.\n"
-        "!info - displays this help information."
+        "Mevcut komutlar:\n"
+        "!task add [görev açıklaması] - Yeni bir görev ekler.\n"
+        "!task remove [görev ID'si] - Belirtilen ID'ye sahip görevi kaldırır.\n"
+        "!task list - Mevcut görevlerin listesini gösterir.\n"
+        "!info - Bu yardım bilgilerini görüntüler."
     )
-    await ctx.send(response)  # Send help information
+    await ctx.send(response)  # Yardım bilgilerini gönder
 
-# Run the bot with your token
+# Botu token ile çalıştır
 bot.run(TOKEN)
